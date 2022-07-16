@@ -94,4 +94,21 @@ fruits_numbers
 my_vector <- c(1, 0, 1, 0)
 my_vector
 
+my_vector_character <- as.character(my_vector)
+my_vector_character
+class(my_vector_character)
+
+my_vector_logical <- as.logical(my_vector)
+my_vector_logical
+
+my_vector_factor <- as.factor(my_vector) # 
+my_vector_factor
+class(my_vector_factor)
+
+my_vector_numeric_again <- as.numeric(my_vector_character)
+my_vector_numeric_again
+
+
+
+
 
