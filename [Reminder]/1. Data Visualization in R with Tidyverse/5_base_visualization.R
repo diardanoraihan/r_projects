@@ -11,6 +11,7 @@ numbers2 <- c(5,5,5,5,5,6,6,6,7,7,7,8,8,8,9,9,9)
 hist(numbers1)
 
 # 2. Boxplot
+# http://www.cookbook-r.com/Graphs/Box_plot/ 
 boxplot(numbers1)
 median(numbers1)
 
@@ -29,6 +30,7 @@ variable2 <- runif(n = 50, min = 0, max = 100)
 my_data <- data.frame(variable1, variable2)
 
 # 1. Scatter Plot
+# http://www.cookbook-r.com/Graphs/Scatterplot/  
 plot(variable1, variable2)
 plot(x = my_data$variable1, y = my_data$variable2)
 
@@ -39,3 +41,10 @@ plot(x = my_data$variable1,
      xlab = "Variable 1", # x axis label
      ylab = "Variable 2", 
      ylim = c(0,150), xlim = c(0, 150)) # set the length of the x and y axes
+
+# 2. Density Plot
+# http://www.cookbook-r.com/Graphs/Histogram_and_density_plot/
+  
+   
+  
+
