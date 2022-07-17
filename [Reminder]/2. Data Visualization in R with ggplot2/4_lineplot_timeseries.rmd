@@ -1,0 +1,80 @@
+---
+title: "Line Plot and Time Series"
+output: pdf_document
+date: "2022-07-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(knitr)
+```
+
+# Create a Dummy Dataset
+
+```{r dataset}
+years <- seq(from = 2001, to = 2020, by = 1)
+
+price <- rnorm(20, mean = 15, sd = 5)
+
+# put years and price together
+fig_data <- tibble("year" = years, "stock_price" = price)
+```
+
+# Line Plot
+Reference: 
+  - https://r-graphics.org/recipe-quick-line
+  - https://r-graphics.org/recipe-line-graph-basic-line
+  - https://r-graphics.org/recipe-line-graph-multiple-line
+  - https://r-graphics.org/recipe-line-graph-line-appearance
+
+## Line Plot - 1
+```{r lineplot1}
+ggplot(fig_data, aes(x = year, y = stock_price))+
+  geom_line()
+```
+
+## Line Plot - 2
+```{r lineplot2}
+# Make data for the first of two stocks
+fig_data$stock_id <- rep("stock_1", 20)
+stock_1_time_series <- fig_data
+
+# Make data for the second company
+years <- seq(from = 2001, to = 2020, by = 1)
+price <- rnorm(20, mean = 10, sd = 3)
+stock_id <- rep("stock_2", 20)
+
+stock_2_time_series <- tibble("year" = years, "stock_price" = price, "stock_id" = stock_id)
+
+# combine the data using bind_rows()
+all_stocks_time_series <- bind_rows(stock_1_time_series, stock_2_time_series)
+
+# make the plot, setting group to stock_id
+ggplot(all_stocks_time_series, aes(x = year, y = stock_price, group = stock_id))+
+  geom_line()
+
+# modify group, linetype, color, and facet_wrap()
+ggplot(all_stocks_time_series, aes(x = year, y = stock_price, group = stock_id, line_type = stock_id, color = stock_id))+
+  geom_line()+
+  facet_wrap(~stock_id)
+```
+
+## Line Plot - 3
+```{r lineplot3}
+# Let's practice using another dataset
+cel <- read_csv("cel_dataset_coursera.csv")
+
+cel$party <- recode(cel$dem, '1' = "Democrat", '0' = "Republican")
+
+fig_data <- cel %>%
+  group_by(party, year) %>%
+  summarize("ideology" = mean(dwnom1, na.rm = T))
+
+# View(fig_data)
+
+# Let's make the plot
+ggplot(fig_data, aes(x = year, y = ideology, group = party, color = party))+
+  geom_line()+
+  scale_color_manual(values = c("blue", "red"))
+```

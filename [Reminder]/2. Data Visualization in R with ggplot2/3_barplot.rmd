@@ -17,6 +17,9 @@ data <- read_csv("cel_dataset_coursera.csv")
 ```
 
 # Bar Plot
+Reference: 
+  - https://r-graph-gallery.com/218-basic-barplots-with-ggplot2.html
+  - http://www.cookbook-r.com/Graphs/Bar_and_line_graphs_(ggplot2)/
 
 ## Basic Configuration
 
