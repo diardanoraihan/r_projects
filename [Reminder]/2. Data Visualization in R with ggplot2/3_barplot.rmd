@@ -1,0 +1,116 @@
+---
+title: "Barplot"
+output: pdf_document
+date: "2022-07-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(knitr)
+```
+
+# Load the Data
+
+```{r dataset}
+data <- read_csv("cel_dataset_coursera.csv")
+```
+
+# Bar Plot
+
+## Basic Configuration
+
+```{r barplot1}
+data %>%
+  filter(congress==115)%>%
+  ggplot(aes(x = dem))+
+  geom_bar()
+
+# prove to yourself your bar plot is right by comparing with a frequency table: 
+kable(table(filter(data, congress == 115)$dem))
+
+# use st_name instead, so how counts of how many members of Congress from each state:
+data %>%
+  filter(congress==115)%>%
+  ggplot(aes(x = st_name))+
+  geom_bar()
+
+# flip the figure by setting y aesthetic rather than the x
+data %>%
+  filter(congress==115)%>%
+  ggplot(aes(y = st_name))+
+  geom_bar()
+
+# let's go back and recode the dem variable to be a categorical variable
+party <- recode(data$dem, '1' = "Democrat", '0' = "Republican")
+
+data <- add_column(data, party)
+
+data %>% 
+  filter(congress == 115) %>%
+  ggplot(aes(x = party))+
+  geom_bar()+
+  labs(x = "Party", y = "Number of Members")
+
+# Let's manually fill and change the colors of the bars and drop the legends with the guides command
+data %>%
+  filter(congress == 115) %>%
+  ggplot(aes(x = party, fill = party))+
+  geom_bar()+
+  labs(x = "Party", y = "Number of Members")+
+  scale_fill_manual(values = c("blue", "red"))+
+  guides(fill = FALSE)
+```
+
+## More Configuration
+- Making more barplots and manipulating more data in R
+### Barplot of proportions
+```{r barplot2}
+# Create a dummy dataset
+apple <- rep("apple", 6)
+orange <- rep("orange", 3)
+banana <- rep("banana", 1)
+
+fruit_bowl <- tibble("fruits" = c(apple, orange, banana))
+fruit_bowl
+
+# create a table that counts fruits in a second column
+fruit_bowl_summary <- fruit_bowl %>%
+  group_by(fruits) %>%
+  summarize("count" = n())
+
+fruit_bowl_summary
+
+# calculate the proportion
+fruit_bowl_summary$proportion <- fruit_bowl_summary$count/sum(fruit_bowl_summary$count)
+
+# add the geom_bar, using "stat" to tell command to plot the exact value for proportion
+ggplot(fruit_bowl_summary, aes(x = fruits, y = proportion, fill = fruits))+
+  geom_bar(stat = "identity")+
+  scale_fill_manual(values = c("red", "yellow", "orange"))+
+  guides(fill = FALSE)+
+  labs(x = "Fruits", y = "Proportion of Fruits")
+```
+
+- The `stat = "identity"` in geom_bar means telling the function not to its default action (which is to use that count function) but instead plot the different values for every single row of the dataset directly based on the "identity" of that value in the table.
+
+### Stacked Bar Plot
+```{r barplot3}
+cces <- read_csv("cces_sample_coursera.csv")
+
+# create counts of Democrats, Republicans, and Independents by Region
+cces$region_name <- recode(cces$region, '1' = "Northwest", '2' = "Midwest", '3' = "South", '4' = "West")
+
+cces$dem_rep <- recode(cces$pid7, '1' = "Democrat", '2' = "Democrat", '3' = "Democrat", '4' = "Independent", '5' = "Republican", '6' =  "Republican", '7' = "Republican")
+
+ggplot(cces, aes(x = region_name, fill = dem_rep))+
+  geom_bar()
+```
+
+### Grouped Bar Plot
+- To make a grouped bar chart, we need to set `position` parameter to `"dodge"` inside the `geom_bar` function. This will take the stacked bar chart and breaks it apart.
+```{r barplot4}
+ggplot(cces, aes(x = region_name, fill = dem_rep))+
+  geom_bar(position = "dodge")+
+  labs(x = "Region", y = "Count")
+```
