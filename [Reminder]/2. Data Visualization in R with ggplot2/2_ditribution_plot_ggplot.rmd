@@ -1,0 +1,92 @@
+---
+title: "Distribution Plot"
+output: pdf_document
+date: "2022-07-17"
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(knitr)
+```
+
+# Load the Dataset
+
+```{r dataset}
+data <- read_csv('cces_sample_coursera.csv')
+```
+
+# Data Visualization
+
+Remember the same process that we will do everytime we want to generate plot using `ggplot`: 
+1. Start with the `ggplot` function. 
+2. Add the `geom_` that you want. 
+3. Mess around with the additional visual elements such as _title_, _lables_, etc.
+
+## Boxplot
+Reference:
+  - https://r-graphics.org/recipe-quick-boxplot
+  - https://r-graphics.org/recipe-distribution-basic-boxplot
+  
+Reference for Violin Plot: 
+  - https://r-graphics.org/recipe-distribution-violin#RECIPE-DISTRIBUTION-VIOLIN
+
+- Basic Boxplot
+
+```{r boxplot, echo=TRUE}
+ggplot(data, aes(y = faminc_new))+
+  geom_boxplot()
+```
+
+- Break up boxplots by education group -- add an aesthetic mapping for group
+
+```{r boxplot2, echo=TRUE}
+ggplot(data, aes(y = faminc_new, group = educ))+
+  geom_boxplot()
+```
+
+- Add labels and a title
+```{r boxplot3, echo=TRUE}
+ggplot(data, aes(y = faminc_new, group = educ))+
+  geom_boxplot()+
+  labs(title = "Family Inc. by Respondent Ed. Level", x = "Income Level", y = "Family Income")
+```
+
+- Reformat the data to create a dichotomous categorical variable for four-year college grads or more, and then all respondents with 2 year college degree or less. 
+
+```{r boxplot4, echo=TRUE}
+
+data$educ_category <- recode(data$educ, '1' = "<4 year Degree", '2' = "<4 year Degree", '3' = "<4 year Degree", '4' = "<4 year Degree", '5' = "4 year Degree", '6' = "4 year Degree +")
+
+# Make sure you change the aesthetic mapping so the new categorical variable is maped to "x" rather than group
+
+ggplot(data, aes(y = faminc_new, x = educ_category))+
+  geom_boxplot()+
+  labs(title = "Family Inc. by Respondent Ed. Level", x = "Income Level", y = "Family Income")
+```
+
+## Histogram (Frequency Distribution Plot)
+Reference:
+  - https://r-graphics.org/recipe-quick-histogram
+  - https://r-graphics.org/recipe-distribution-basic-hist#RECIPE-DISTRIBUTION-BASIC-HIST
+  - https://r-graphics.org/recipe-distribution-multi-hist#RECIPE-DISTRIBUTION-MULTI-HIST
+
+```{r boxplot5, echo=TRUE}
+ggplot(data, aes(x = faminc_new))+
+  geom_histogram()+
+  labs(title = "Family Inc. by Respondent Ed. Level", x = "Income Level", y = "Frequency")
+
+# with binwidth
+ggplot(data, aes(x = faminc_new))+
+  geom_histogram(binwidth = 4)+
+  labs(title = "Family Inc. by Respondent Ed. Level", x = "Income Level", y = "Frequency")
+```
+
+# Density Plot
+Reference: 
+- https://r-graphics.org/recipe-distribution-basic-density
+```{r boxplot6, echo=TRUE}
+ggplot(data, aes(x = faminc_new))+
+  geom_density()+
+  labs(title = "Family Inc. by Respondent Ed. Level", x = "Income Level", y = "Density")
+```

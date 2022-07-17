@@ -58,7 +58,8 @@ table(data$year)
 fig115 <- data %>% filter(congress == 115) %>% select("seniority", "all_pass")
 head(fig115)
 
-# set up the data and aesthetic
+# set up the data and aesthetic.
+# Aesthetic mapping connects visual elements of the figure with variables in the data.
 ggplot(fig115, aes(x = seniority, y = all_pass)) # it will generate a blank plot with x and y axis
 
 # add the marks or points
@@ -122,7 +123,8 @@ ggplot(fig115, aes(x = seniority, y = all_pass, color = party))+
 ```
 
 ## Separate the Plot into Subplots
-- Let's make the plot into two separate plots using `face_wrap`
+- Let's make the plot into two separate plots using `face_wrap`.
+- Facetting is creating tables of graphics by splitting the data into subsets and displaying the same graph for each subset.
 ```{r myLastPlot}
 ggplot(fig115, aes(x = seniority, y = all_pass, color = party))+
   geom_jitter()+
