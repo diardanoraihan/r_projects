@@ -1,0 +1,127 @@
+# Introduction to `ggplot` 
+
+- __gg__ in `ggplot` stands for the grammar of graphics.
+
+- The recipe: 
+  - Tidy data
+  - Mapping _aesthetics_ to the plot
+  - Geoms - geometric shapes on the plot
+  - Coordinate system
+  - Lables, guides (legends), and other annotations. 
+
+- Dataset
+  - Data from the Center for Effective Lawmaking (CEL) from Volden and Wisemen
+  - This dataset is great for visualization purposes.
+  - Review the codebook and look at the .csv attached.
+
+- Business Problem
+  - How does the number of bills passed by a member in a Congress relate to seniority? 
+  - How long members have been in the chamber?
+  - We'll focus on the 115th Congress.
+  
+# Load the libraries
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(knitr)
+```
+
+# Load the Data
+```{r dataset, echo=TRUE}
+data <- read_csv("cel_dataset_coursera.csv")
+
+# see the column names
+names(data)
+
+# see the dimension of data
+dim(data)
+
+# see the statistics summary
+summary(data$all_bills)
+table(data$year)
+```
+
+# Data Visualization
+
+## Basic ggplot
+
+- To create a scatter plot, once we add the aesthetic to the `ggplot` function, we can add the geometric shape to it by adding a function called `geom_point`. 
+- Note that we don't need to pass any parameter inside the function because it inherits the data and aesthetic mapping from the original from the original ggplot command.
+
+```{r myFirstVisual}
+# Filter the data we want
+fig115 <- data %>% filter(congress == 115) %>% select("seniority", "all_pass")
+head(fig115)
+
+# set up the data and aesthetic
+ggplot(fig115, aes(x = seniority, y = all_pass)) # it will generate a blank plot with x and y axis
+
+# add the marks or points
+ggplot(fig115, aes(x = seniority, y = all_pass))+
+  geom_point()
+
+```
+
+## Add Jitter and Labels
+- Notice that many points in the scatterplot are on top of each other. 
+- To solve this, we can use `geom_jitter` to add randoms noise to the data to avoid overplotting. 
+- This technique is useful to maximize the reader's ability to interpret the data while minimizing any kind of deceptive or manipulating practice.
+
+```{r mySecondVisual}
+# jitter adds random noise tot he ata to avoid overplotting
+ggplot(fig115, aes(x = seniority, y = all_pass))+
+  geom_jitter()
+
+# add some labels and a title
+ggplot(fig115, aes(x = seniority, y = all_pass))+
+  geom_jitter()+
+  labs(x = "Seniority", y = "Bills Passed", title = "Seniority and Bills Passed in the 115th Congress")
+
+```
+
+## Add and Modify the Color
+
+```{r myThirdVisual}
+# modify the filter and select to grab "dem"
+fig115 <- data %>% 
+  filter(congress == 115) %>%
+  select("seniority", "all_pass", "dem")
+
+ggplot(fig115, aes(x = seniority, y = all_pass, color = dem))+
+  geom_jitter()+
+  labs(x = "Seniority", y = "Bills Passed", title = "Seniority and Bills Passed in the 115th Congress")
+
+```
+
+- Notice that the color legend is strange since it's not supposed to be a continuous one rather than a discrete one. Let's fix it!
+
+```{r myFourthVisual}
+party <- recode(fig115$dem, '1' = 'Democrat', '0' = 'Republican')
+
+fig115 <- add_column(fig115, party)
+
+ggplot(fig115, aes(x = seniority, y = all_pass, color = party))+
+  geom_jitter()+
+  labs(x = "Seniority", y = "Bills Passed", title = "Seniority and Bills Passed in the 115th Congress")
+```
+
+- The color that we just saw is set automatically by R. Let's modify it!
+
+- let's make the colors match traditional blue democrats and red republicans.
+
+```{r myFifthVisual}
+ggplot(fig115, aes(x = seniority, y = all_pass, color = party))+
+  geom_jitter()+
+  labs(x = "Seniority", y = "Bills Passed", title = "Seniority and Bills Passed in the 115th Congress")+
+  scale_color_manual(values = c("blue", "red"))
+```
+
+## Separate the Plot into Subplots
+- Let's make the plot into two separate plots using `face_wrap`
+```{r myLastPlot}
+ggplot(fig115, aes(x = seniority, y = all_pass, color = party))+
+  geom_jitter()+
+  labs(x = "Seniority", y = "Bills Passed", title = "Seniority and Bills Passed in the 115th Congress")+
+  scale_color_manual(values = c("blue", "red"))+
+  facet_wrap(~party)
+```
