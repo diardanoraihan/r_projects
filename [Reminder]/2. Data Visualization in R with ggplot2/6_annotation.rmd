@@ -1,0 +1,114 @@
+---
+title: "Annotation"
+output: pdf_document
+date: "2022-07-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+Elegant Graphics for Data Analysis: 
+- https://ggplot2-book.org/annotations.html  
+- https://ggplot2-book.org/mastery.html  
+
+We will make a scatter plot of lifetime high scores in teteis against cumulative hours playing tetris. 
+
+Normally, we will see positive correlation.
+
+## Basic Scatter Plot
+
+```{r plot1}
+library(tidyverse)
+
+kid <- c("Nick", "Jessica", "Justin", "Brandi", "Kelly", "Enrique")
+time_spent <- c(40, 35, 25, 20, 10, 5)
+high_score <- c(100, 75, 85, 50, 25, 30)
+
+tetris <- tibble(kid, time_spent, high_score)
+tetris
+
+ggplot(tetris, aes(x = time_spent, y = high_score))+
+  geom_point()
+
+```
+
+## Scatter Plot with Label
+- We can add label on top of the points on the plot using `geom_text` function.
+
+```{r plot2}
+ggplot(tetris, aes(x = time_spent, y = high_score))+
+  geom_point()+
+  geom_text(aes(label = kid))
+```
+
+- Notice that the text and the point are overlap making it not look attractive. We have two options here: 
+```{r plot3}
+# remove the geom_point so only the labels that exist
+ggplot(tetris, aes(x = time_spent, y = high_score))+
+  #geom_point()+
+  geom_text(aes(label = kid))
+
+# use parameter `nudge_x` or `nudge_y` inside `geom_text` function to adjust the label position
+ggplot(tetris, aes(x = time_spent, y = high_score))+
+  geom_point()+
+  geom_text(aes(label = kid), nudge_y = 2.5, nudge_x = 1)
+
+# ?geom_text
+```
+
+## Scatter Plot with Congress Dataset
+- Plot political ideology and how many bills a member passes
+  - Note: __dwnom1__ on the x axis, __all_pass__ on the y axis
+  
+```{r plot4}
+# load the dataset
+cel <- drop_na(read_csv("cel_dataset_coursera.csv"))
+
+# use piping to feed the data to ggplot
+# notice instead of puting label on geom_text, we put it inside aes() function in ggplot. 
+# the subsequent functions (geom_point, geom_text) will inherit the values passed to the params inside the original ggplot function.
+cel %>% 
+  filter(congress == 115) %>%
+  ggplot(aes(x = dwnom1, y = all_pass, label = thomas_name))+
+  geom_point()+
+  geom_text()
+```
+
+- Notice that the plot is __really messy__. 
+- One way to solve this is by adding text only for a small subset of the member.
+- We can specify to only want the `geom_text` to apply to a subset of the data.
+
+```{r plot5}
+cel %>% 
+  filter(congress == 115) %>%
+  ggplot(aes(x = dwnom1, y = all_pass, label = thomas_name))+
+  geom_point()+
+  # specify here that you only want the geom_text to apply to a subset of the data
+  geom_text(data = filter(cel, congress == 115 & all_pass > 8))
+```
+
+- Another way to solve this is by using a new package called `ggrepel`. 
+  - This package is not included inside tidyverse, but it works well with ggplot and is pretty common to use for data visualization with R.
+
+```{r plot6}
+# install.packages("ggrepel")
+library(ggrepel)
+
+# ggrepel will use spacey algorithm to push the text apart from each other making it more readable
+cel %>% 
+  filter(congress == 115) %>%
+  ggplot(aes(x = dwnom1, y = all_pass))+
+  geom_point()+
+  geom_text_repel(data = filter(cel, congress == 115 & all_pass > 8), mapping = aes(x = dwnom1, y = all_pass, label = thomas_name))
+
+# add rectangular highlight and annotation to the plot
+cel %>% 
+  filter(congress == 115) %>%
+  ggplot(aes(x = dwnom1, y = all_pass))+
+  geom_point()+
+  geom_text_repel(data = filter(cel, congress == 115 & all_pass > 8), mapping = aes(x = dwnom1, y = all_pass, label = thomas_name))+
+  annotate("rect", xmin = .05, xmax = .4, ymin = 13, ymax = 15, alpha = .2, fill = "red")+
+  annotate("text", x = .55 , y = 14, label = "Most Passed", color = 'red')
+```
