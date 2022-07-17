@@ -1,0 +1,41 @@
+---
+title: "New Report with kable and qplot"
+output: pdf_document
+date: "2022-07-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+?rmarkdown
+
+library(tidyverse)
+library(knitr)
+
+data <- read_csv('cces_sample_coursera.csv')
+data <- drop_na(data)
+```
+
+# My First Tables
+
+We can use `kable` function combined to generate a table. 
+```{r myTable, echo=TRUE}
+?kable
+kable(table(data$gender), align = "l")
+kable(summarize(data, Mean = mean(data$faminc_new), Median = median(data$faminc_new), align = 'l', label= 'Summary Statistics for Family Income'))
+```
+
+## My First QPlots
+
+tidyverse includes one of the most powerful visualization library called `ggplot2` that we will learn later. However, for quick visualization, besides using the R base tool, we can use `qplot` which is a quick plotting tool that incorporates some ggplot tools but seems like based visualization tools in R. 
+
+```{r myQplot, echo=TRUE}
+data(mtcars)
+# geom stands for geometry (basic options: histogram, density, boxplot, point, and line)
+
+qplot(x = mpg, data = mtcars, geom = 'histogram', bins = 5, main = "Histogram Title", xlab = "Miles per Gallon")
+qplot(x = mpg, data = mtcars, geom = 'density', main = "Density Plot Title", xlab = "Miles per Gallon")
+qplot(x = mpg, data = mtcars, geom = 'boxplot', main = "Box Plot Title", xlab = "Miles per Gallon")
+qplot(x = wt, y = mpg, data = mtcars, geom = 'point', main = "Scatter Plot Title", xlab = "Weight", ylab = "Miles per Gallon")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
