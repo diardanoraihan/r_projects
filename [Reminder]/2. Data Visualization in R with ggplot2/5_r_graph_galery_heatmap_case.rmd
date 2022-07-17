@@ -1,0 +1,66 @@
+---
+title: "How to Use R Graph Galery: HeatMap Study Case"
+output: pdf_document
+date: "2022-07-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Steps
+1. Visit https://r-graph-gallery.com/
+2. Look for the graph that we are interested in building it (in this case, Heat Map)
+3. Search for the Code that suits your style (i.e. ggplot).
+4. Follow the tutorial presented there (copy and paste it onto your code editor).
+
+# Heat Map 
+## Dummy Dataset (taken from R Graph Galery)
+
+```{r heatmap1}
+# Library
+library(tidyverse)
+
+# Dummy data
+x <- LETTERS[1:20]
+y <- paste0("var", seq(1,20))
+
+# Create a Data Frame from All Combinations of Factor Variables
+?expand.grid
+data <- expand.grid(X=x, Y=y) # this will generate 400 unique combination (20 x 20)
+
+# Generate values by uniform distribution
+?runif
+data$Z <- runif(400, 0, 5)
+ 
+# Heatmap 
+ggplot(data, aes(X, Y, fill= Z)) + 
+  geom_tile()
+```
+
+## Sensible Dataset
+
+```{r heatmap2}
+players <- c("Michael", "LeBron", "Kobe")
+points <- c(35, 40, 45)
+assists <- c(10, 12, 5)
+rebounds <- c(15, 12, 5)
+
+# Create a tibble data frame
+basketball <- tibble(players, points, assists, rebounds)
+
+# standardize the value so that all values have the same range
+basketball$standardize_points <- basketball$points/max(basketball$points)
+basketball$standardize_assists <- basketball$assists/max(basketball$assists)
+basketball$standardize_rebounds <- basketball$rebounds/max(basketball$rebounds)
+
+basketball_standardize <- select(basketball, "players", "standardize_points", "standardize_assists", "standardize_rebounds")
+
+# We need to convert the wide tibble into long tibble using pivot_longer() function
+long_basketball_scaled <- pivot_longer(data = basketball_standardize, cols = c("standardize_points", "standardize_assists", "standardize_rebounds"), names_to = "stat", values_to = "value")
+
+# make the heatmap plot
+ggplot(long_basketball_scaled, aes(x = players, y = stat, fill= value)) + 
+  geom_tile()
+
+```
