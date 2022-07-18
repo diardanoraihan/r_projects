@@ -80,7 +80,8 @@ ggplot(plot_data, aes(x = ideo5, y = CC18_308a, color = employ_cat))+
 - Fortunately, there is an easier way by using `ggtheme`.
   - `ggtheme` contains pre-baked themes that you can try and modify all __allyourfigurearebelongtous__ for pictures of themes.
   - Browse to https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/ to get your prefered pre-baked theme and start from there.
-  - For example, we wil pick `theme_wsj` to modify the current plot.
+    - For example, we wil pick `theme_wsj` to modify the current plot.
+  - Another reference for `ggtheme`: https://ggplot2.tidyverse.org/reference/ggtheme.html
   
 ```{r plot5}
 ggplot(plot_data, aes(x = ideo5, y = CC18_308a, color = employ_cat))+
