@@ -1,0 +1,95 @@
+---
+title: "Color, Legend, and Themes"
+output: pdf_document
+date: "2022-07-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Import Survey Data
+
+```{r dataset}
+# install.packages("RColorBrewer")
+# install.packages("ggthemes")
+library(tidyverse)
+# the package that works well with ggplot that provides aesthetically pleasing color palettes
+library(RColorBrewer) 
+library(ggthemes)
+
+cces <- read_csv("cces_sample_coursera.csv")
+```
+
+## Make a Small Data Set with Variables
+
+```{r smalldataset}
+plot_data <- select(cces, "CC18_308a", "ideo5", "educ", "faminc_new", "employ") %>% drop_na()
+```
+
+# Visualize the Data
+## Basic Scatter Plot with Jitter
+```{r plot1}
+ggplot(plot_data, aes(y = CC18_308a, x = ideo5))+
+  geom_jitter()
+```
+
+## Scatter Plot with Automatic Color Gradient
+```{r plot2}
+ggplot(plot_data, aes(y = CC18_308a, x = ideo5, color = educ, size = faminc_new))+
+  geom_jitter()
+
+ggplot(plot_data, aes(y = CC18_308a, x = ideo5, color = educ, size = faminc_new))+
+  geom_jitter()+
+  # use scale_color_gradient here to show continuous change in a numeric variable
+  scale_color_gradient(low = 'gray', high = 'purple')
+```
+
+## Scatter Plot with Color Brewer
+```{r plot3}
+# Use employment as categorical variable 
+plot_data$employ_cat <- recode(plot_data$employ, '1' = "Full-time", '2' = "Part-time", '3' = "Temp. Layoff", '4' = "Unemployed", '5' = "Retired", '6' = "Disabled", '7' = "Homemaker", '8' = "Student", '9' = "Other")
+
+# Instead of scale color gradient, use scale color brewer for the discrete variable you have created
+ggplot(plot_data, aes(y = CC18_308a, x = ideo5, color = employ_cat))+
+  geom_jitter()+
+  scale_color_brewer(palette = "RdYlGn")
+```
+
+- There are many palletes -- https://www.r-graph-gallery.com/38-rcolorbrewers-palettes
+
+## Using Themes
+- Theme function is useful to modify elements of the figure (plot) that are not tied directly to values of the data. 
+- In the previous code we show you how to change the color or size of points based on the data itself. Now, we will use theme to modify elements that are consistent regardless of what the underlying data are.
+- Note: __theme__ is a complicated function since it has many arguments, so make sure to look at the documentation for theme in the tidyverse. 
+```{r plot4}
+ggplot(plot_data, aes(x = ideo5, y = CC18_308a, color = employ_cat))+
+  geom_jitter()+
+  scale_color_brewer(name = "employ_cat", palette = "RdYlGn")+
+  # look at all the control you have using the theme() function
+  theme(legend.position = "bottom", 
+        axis.text.x = element_text(angle = 90, hjust = 1, color = "blue"), 
+        axis.title = element_text(color = "red"))+
+  labs(x = "Ideology",y = "Trump Approval", 
+       title = "trump Approval, Ideology, and Employment", caption = "A caption might have a quick note about the figure or a sourcing")
+```
+
+- Notice that using `theme` function is kinda complex and difficult to follow until you start to really dig into your self.
+
+
+- Fortunately, there is an easier way by using `ggtheme`.
+  - `ggtheme` contains pre-baked themes that you can try and modify all __allyourfigurearebelongtous__ for pictures of themes.
+  - Browse to https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/ to get your prefered pre-baked theme and start from there.
+  - For example, we wil pick `theme_wsj` to modify the current plot.
+  
+```{r plot5}
+ggplot(plot_data, aes(x = ideo5, y = CC18_308a, color = employ_cat))+
+  geom_jitter()+
+  theme_wsj()
+
+# you can still control elements of a pre-baked ggtheme yourself by adding additional theme() functions
+ggplot(plot_data, aes(x = ideo5, y = CC18_308a, color = employ_cat))+
+  geom_jitter()+
+  theme_wsj()+
+  theme(axis.text = element_text(angle = 90))
+```
