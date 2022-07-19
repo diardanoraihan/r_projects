@@ -1,0 +1,75 @@
+---
+title: "Variation on Scatterplots"
+author: "Diardano Raihan"
+date: "2022-07-19"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Import the Libraries and Dataset
+
+```{r dataset}
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+library(RColorBrewer)
+cces <- read_csv("cces_sample_coursera.csv")
+cel <- read_csv("cel_dataset_coursera.csv")
+```
+
+# Variations on Scatter Plots
+## Add a best-fit line with geom_smooth
+Reference: 
+- Adapted from https://r-graphics.org/recipe-scatter-fitlines
+- Adapted from https://ggplot2.tidyverse.org/reference/geom_smooth.html
+
+```{r plot1}
+# Let's see the normal scatter plot look like
+ggplot(cces, aes(x = educ, y = ideo5))+
+  geom_jitter()
+
+# Add a linear model "lm" that fit the plot
+ggplot(cces, aes(x = educ, y = ideo5))+
+  geom_jitter()+
+  geom_smooth(method = "lm")
+
+# Add a loess curve moder "lm" that fit the plot
+ggplot(cces, aes(x = educ, y = ideo5))+
+  geom_jitter()+
+  geom_smooth(method = "loess")
+
+# Change the confidence level 
+ggplot(cces, aes(x = educ, y = ideo5))+
+  geom_jitter()+
+  geom_smooth(method = "lm", level = .9)
+```
+
+- Be very careful with changing the confidence level if you're not statistically inclined, because doing statistical inference with this kind of approach is pretty dicey. 
+
+- Exploratory analysis is fine so if you want to draw some best fit lines to your scatter plot to get a sense for the data just sort of an intuition is an okay thing to do.
+
+## Scatter Plot Matrix
+- Another use of scatter plot for EDA is to use a scatter plot matrix which will show you the bivariate relationship several different variables in your data at once. 
+```{r plot2}
+# install.packages("GGally")
+library(GGally)
+
+# Make up some numeric data.
+# Two variables will be positively correlated, and the third will be negatively correlated with the first.
+var1 <- runif(100, 0, 1)
+var2 <- var1 + rnorm(100, 1, .2)
+var3 <- var1*(-rnorm(100, 1, .2))
+
+df <- tibble(var1, var2, var3)
+df
+
+ggpairs(df)
+```
+
+## Customize the Matrix Figures by Custom Function
+```{}
+
+```
