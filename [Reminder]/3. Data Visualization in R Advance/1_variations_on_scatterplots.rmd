@@ -53,6 +53,8 @@ ggplot(cces, aes(x = educ, y = ideo5))+
 
 ## Scatter Plot Matrix
 - Another use of scatter plot for EDA is to use a scatter plot matrix which will show you the bivariate relationship several different variables in your data at once. 
+- We can achieve this by using `ggplot` function.
+  - Reference: https://rkabacoff.github.io/datavis/Other.html#scatterplot-matrix
 ```{r plot2}
 # install.packages("GGally")
 library(GGally)
@@ -66,10 +68,92 @@ var3 <- var1*(-rnorm(100, 1, .2))
 df <- tibble(var1, var2, var3)
 df
 
+# Let's plot the scatterplot matrix using ggpair()
 ggpairs(df)
 ```
 
 ## Customize the Matrix Figures by Custom Function
-```{}
+```{r plot3}
+# Write your own function for the scatterplot
+my_scatter <- function(data, mapping){
+  ggplot(data = data, mapping = mapping)+
+    geom_jitter(color = "red")
+}
 
+# Write your own function for density plot
+my_density <- function(data, mapping){
+  ggplot(data = data, mapping = mapping)+
+    geom_density(alpha = .05, 
+                 fill = "red")
+}
+
+# Substitute your functions for the functions that ggpairs() uses to draw the figures
+ggpairs(df, 
+        lower = list(continuous = my_scatter),
+        diag = list(continuous = my_density))
+```
+
+## Correlation Plots
+- Reference: https://rkabacoff.github.io/datavis/Models.html#Corrplot
+```{r plot4}
+# install.packages("ggcorrplot")
+library(ggcorrplot)
+library(ggthemes)
+
+# Let's use some example survey data
+df <- cces %>% select("educ", "pid7", "pew_religimp")
+
+# Calculate correlation coefficients
+r <- cor(df, use = 'complete.obs')
+?cor
+
+# generate the correlation plot
+ggcorrplot(r)
+
+# show just the lower part of the figure (to avoid 1 correlations on the diagonal)
+ggcorrplot(r, type = "lower")
+
+# modify some visual elements
+ggcorrplot(r, type = "lower", 
+           title = "Correlations", 
+           colors = c("yellow", "green", "blue"), 
+           outline.color = "purple")
+
+# use ggtheme is you want
+ggcorrplot(r, type = "lower", 
+           title = "Correlations")+
+  theme_wsj()
+```
+
+## Cleveland Dot Plots
+- Adapted from https://r-graphics.org/recipe-bar-graph-dot-plot
+
+```{r plot5}
+# Use some of the congress data
+cel_114 <- cel %>% filter(congress == 114)
+
+members <- sample_n(cel_114, 25)
+
+# points only
+ggplot(members, aes(x = les, y = thomas_name))+
+  geom_point()
+
+# some refinements
+ggplot(members, aes(x = les, y = reorder(thomas_name, les)))+ # reorder in descending
+  geom_point(size = 5)+
+  theme(panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank(), 
+        panel.grid.major.y = element_line(linetype = "dashed", color = "blue"))+
+  labs(x = "Legislative Effectiveness", y = "")
+```
+
+## Lollipop Figure
+- Although it falls under the variations of scatterplot, it is also just the very refined simple way of making a bar plot essentially.
+- https://www.r-graph-gallery.com/300-basic-lollipop-plot.html
+
+```{r plot6}
+ggplot(members, aes(x = reorder(thomas_name, les), y = les))+ # reorder in descending
+  geom_point(size = 5)+
+  geom_segment(aes(x = thomas_name, xend = thomas_name, y = 0, yend = les))+
+  theme(axis.text.x = element_text(angle = 90))
 ```
