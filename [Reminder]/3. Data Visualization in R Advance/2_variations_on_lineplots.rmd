@@ -1,0 +1,105 @@
+---
+title: "Variations on Line Plots"
+author: "Diardano Raihan"
+date: "2022-07-21"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Import the Libraries and Dataset
+
+```{r dataset}
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+library(RColorBrewer)
+```
+
+# Variations on Line Plots
+## Area Plots
+- You might think that you should use a fill aesthetic and geom_line(). It turns out that the best way to do this is by using geom_area().
+- reference: https://r-graphics.org/recipe-line-graph-area
+```{r plot1}
+var1 <- runif(10, 0, 25)
+time <- seq(1, 10)
+
+df <- tibble(var1, time)
+
+# just filling in the space under the line
+ggplot(df, aes(x = time, y = var1))+
+  geom_area()
+
+# a litle aesthetic tweaking
+ggplot(df, aes(x = time, y = var1, fill = 'red'))+
+  geom_area()+
+  guides(fill = "none")
+```
+
+## A Stacked Line Graph
+- Adapted form https://r-graphics.org/recipe-line-graph-stacked-area
+```{r plot2}
+# Create fake data for three people at three different time points
+Bob <- tibble(person = rep("Bob", 5), time = seq(1:5), change = runif(5, 0, 25))
+Sue <- tibble(person = rep("Sue", 5), time = seq(1:5), change = runif(5, 0, 25))
+Liz <- tibble(person = rep("Liz", 5), time = seq(1:5), change = runif(5, 0, 25))
+
+df <- bind_rows(Bob, Sue, Liz)
+df
+
+# plot the stacked lineplot
+ggplot(df, aes(x = time, y = change, fill = person))+
+  geom_area()
+
+# test your understanding of what the plot is showing
+df_wide <- df %>%
+  pivot_wider(id_cols = time, values_from = change, names_from = person)
+df_wide
+
+# note that the stacked areas add up to the totals
+df_wide$total <- df_wide$Bob + df_wide$Sue + df_wide$Liz
+df_wide
+```
+
+## Dumbell Chart
+- Adapted from https://rkabacoff.github.io/datavis/Time.html#dummbbell-charts
+```{r plot3}
+# install.packages("ggalt")
+library(ggalt)
+
+# reformat the fake data from the stacked area chart, so we are comparing times at 1 and 5 for Bob, Sue, and Liz
+
+df2 <- df %>%
+  filter(time == 1 | time == 5) %>%
+  pivot_wider(names_from = time, values_from = change) %>%
+  rename(year1 = "1", year5 = "5")
+
+df2
+
+# basic dumbell chart
+ggplot(df2, 
+       aes( y = person,     # the starting point, earliest time
+            x = year1,      # the ending point, final time
+            xend = year5))+ # connects the points
+  geom_dumbbell()
+
+# reorder the y axis
+ggplot(df2, 
+       aes( y = reorder(person, year1), # reorder the y axis
+            x = year1,
+            xend = year5))+
+  geom_dumbbell()
+ggplot(df2, 
+       aes( y = reorder(person, year1), # reorder the y axis
+            x = year1,
+            xend = year5))+
+  geom_dumbbell(
+    colour_x = "purple", 
+    colour_xend = "red", 
+    size_x = 3, 
+    size_xend = 3
+  )
+# change the color and sizes
+```
