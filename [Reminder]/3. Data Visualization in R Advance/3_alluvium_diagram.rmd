@@ -1,0 +1,95 @@
+---
+title: "3_variations_on_flow_n_circle_diagrams"
+author: "Diardano Raihan"
+date: "2022-07-21"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Import the Libraries and Dataset
+
+```{r dataset}
+library(tidyverse)
+library(knitr)
+library(ggthemes)
+library(RColorBrewer)
+```
+
+# Flows
+
+## Alluvial Diagrams
+- A good visualization to show parts of a whole world connections between different categories and data.
+- Let's create some fake data about student performance in classes.
+  - 21 students are divided in 3 groups, they are men and women, and they get High Pass, Pass, or Fail.
+- Reference: https://github.com/corybrunson/ggalluvial
+
+```{r data}
+group1 <- tibble(groupid = groupid <- rep("group1", 7), 
+                 studentID = sample(seq(from = 1, to = 20), 7),
+                 gender = sample(c("M", "F"), 7, replace = TRUE), 
+                 grades = sample(c("High Pass", "Pass", "Fail"), 7, replace = TRUE))
+
+group2 <- tibble(groupid = groupid <- rep("group2", 7), 
+                 studentID = sample(seq(from = 21, to = 30), 7),
+                 gender = sample(c("M", "F"), 7, replace = TRUE), 
+                 grades = sample(c("High Pass", "Pass", "Fail"), 7, replace = TRUE))
+
+group3 <- tibble(groupid = groupid <- rep("group3", 7), 
+                 studentID = sample(seq(from = 31, to = 40), 7),
+                 gender = sample(c("M", "F"), 7, replace = TRUE), 
+                 grades = sample(c("High Pass", "Pass", "Fail"), 7, replace = TRUE))
+
+students <- bind_rows(group1, group2, group3)
+students
+
+# summarize data
+students_table <- students %>%
+  group_by(groupid, gender, grades) %>%
+  count()
+```
+
+- Now, let's draw the alluvial framework
+
+```{r plot1}
+# install.packages("ggalluvial")
+library(ggalluvial)
+
+# barebones alluvial
+ggplot(students_table, 
+       aes(axis1 = groupid, 
+           axis2 = grades, 
+           y = n))+
+  geom_alluvium()
+
+# add strata
+ggplot(students_table, 
+       aes(axis1 = groupid, 
+           axis2 = grades, 
+           y = n))+
+  geom_alluvium()+
+  geom_stratum()
+
+# add labels
+ggplot(students_table, 
+       aes(axis1 = groupid, 
+           axis2 = grades, 
+           y = n))+
+  geom_alluvium()+
+  geom_stratum()+
+  geom_text(stat = "stratum", 
+            aes(label = after_stat(stratum)))
+
+# change colors
+ggplot(students_table, 
+       aes(axis1 = groupid, 
+           axis2 = grades, 
+           y = n))+
+  geom_alluvium(aes(fill = gender))+
+  geom_stratum()+
+  geom_text(stat = "stratum", 
+            aes(label = after_stat(stratum)))+
+  scale_fill_manual(values = c("purple", "green"))
+```
