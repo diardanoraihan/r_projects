@@ -1,0 +1,13 @@
+name: ShinyInputOutput
+title: ShinyInputOutput
+username:
+account: diardano
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6682108
+bundleId: 6125923
+url: https://diardano.shinyapps.io/ShinyInputOutput/
+when: 1658583699.11328
+lastSyncTime: 1658583699.11329
+asMultiple: FALSE
+asStatic: FALSE
