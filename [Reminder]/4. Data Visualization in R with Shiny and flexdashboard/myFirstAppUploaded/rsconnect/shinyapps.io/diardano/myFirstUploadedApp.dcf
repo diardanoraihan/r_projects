@@ -1,0 +1,13 @@
+name: myFirstUploadedApp
+title: myFirstUploadedApp
+username:
+account: diardano
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6680992
+bundleId: 6125228
+url: https://diardano.shinyapps.io/myFirstUploadedApp/
+when: 1658542532.22665
+lastSyncTime: 1658542532.2267
+asMultiple: FALSE
+asStatic: FALSE
