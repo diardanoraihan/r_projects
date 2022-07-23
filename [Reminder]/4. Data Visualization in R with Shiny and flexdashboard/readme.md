@@ -34,7 +34,7 @@
 - `renderPlot()`
 - `renderPlotly()`
 
-__How These Work Together: __
+__How These Work Together:__
 - `textOutput()` -----------------> `renderText()`
 - `verbatimTextOutput()` ---------> `renderPrint()`
 - `tableOutput()` ----------------> `renderTable()`
