@@ -1,4 +1,6 @@
 # Shiny App 101
+- Tutorial: https://shiny.rstudio.com/tutorial/written-tutorial/lesson1/
+- Mastering Shiny: https://mastering-shiny.org/preface.html
 ## A. Components of a Shiny App
 1. __User Interface__: controls visual elements
   - Created with `fluidPage` function.
