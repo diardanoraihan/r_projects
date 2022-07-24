@@ -13,6 +13,7 @@
 3. Combine these in the `shinyApp()` function.
 
 ## B. Basic Input Options in the UI-side
+See the widgets gallery here: https://shiny.rstudio.com/gallery/widget-gallery.html
 - `textInput()`: allows the user to write in text
 - `numericInput()`: lets users type numbers
 - `sliderInput()`: tells users to select values from a slider
