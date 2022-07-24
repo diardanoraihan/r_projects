@@ -43,7 +43,8 @@ __How These Work Together:__
 - `plotlyOutput()` ---------------> `renderPlotly()`
 
 ## E. Layout
-Reference: https://shiny.rstudio.com/articles/layout-guide.html
+- Reference: https://shiny.rstudio.com/articles/layout-guide.html
+- Gallery (with an example): https://shiny.rstudio.com/gallery/nz-trade-dash.html
 
 ### E.1. Sidebar Layout
 Skeleton: 
