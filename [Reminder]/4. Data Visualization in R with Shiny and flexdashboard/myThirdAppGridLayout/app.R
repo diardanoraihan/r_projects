@@ -99,7 +99,7 @@ ui <- fluidPage(
   
   fluidRow(
     column(4,
-           inputPanel(
+           wellPanel(
              sliderInput(inputId="input_year2",
                          label="Select Year",
                          value=c(1990,1994),
@@ -174,7 +174,7 @@ server <- function(input, output){
     
     plot_dat2<-filter(
       all_data,
-      city==input$city1 & year>=input$input_year2[1] & year<=input$input_year2[2])
+      city==input$city2 & year>=input$input_year2[1] & year<=input$input_year2[2])
     
     ggplot(plot_dat2,
            aes(x=year,y=var1,group=city))+

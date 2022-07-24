@@ -31,9 +31,9 @@ df <- bind_rows(city1,city2,city3)
 
 
 # ui <- fluidPage(
-#   
+# 
 #   titlePanel("Application Title"),
-#   
+# 
 #   navlistPanel(
 #     "Header A",
 #     tabPanel(title="Component 1",

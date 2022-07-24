@@ -41,3 +41,117 @@ __How These Work Together:__
 - `dataTableOutput()` ------------> `renderDataTable()`
 - `plotOutput()` -----------------> `renderPlot()`
 - `plotlyOutput()` ---------------> `renderPlotly()`
+
+## E. Layout
+Reference: https://shiny.rstudio.com/articles/layout-guide.html
+
+### E.1. Sidebar Layout
+Skeleton: 
+```
+sidebarLayout(
+
+  # The sidebar can be positioned to the left (default) or right the main area
+  position = "right",
+              
+  sidebarPanel = sidebarPanel(
+    # Inputs excluded for brevity
+    ),
+  mainPanel = mainPanel(
+    # Outputs excluded for brevity 
+    )
+)
+```
+
+### E.2. Grid layout
+Skeleton: 
+```
+ui<- fluidPage(
+  fluidRow(
+    column(4,
+           inputPanel(
+             sliderInput(...),
+             selectInput(...)
+           )),
+    column(4,
+           plotOutput(...)
+          ),
+    column(4,
+           tableOuput(...)
+           )
+  ),
+  fluidRow(
+    column(4,
+           wellPanel(
+             sliderInput(...),
+             selectInput(...)
+           )),
+    column(4,
+           plotOutput(...)
+    ),
+    column(4,
+           tableOuput(...)
+    )
+  )
+
+)
+```
+
+### E.3. Navlists Layout
+Skeleton: 
+```
+ui <- fluidPage(
+
+  titlePanel("Application Title"),
+
+  navlistPanel(
+    "Header A",
+    tabPanel(title="Component 1",
+            sliderInput(),
+            checkboxGroupInput(),
+            plotOutput()
+            ),
+    tabPanel("Component 2"),
+    "Header B",
+    tabPanel("Component 3"),
+    tabPanel("Component 4"),
+    "-----",
+    tabPanel("Component 5")
+  )
+)
+```
+
+### E.4. NavbarPage Layout
+Skeleton: 
+```
+ui <- navbarPage("My Application",
+  tabPanel("Component 1"),
+  tabPanel("Component 2"),
+  navbarMenu("More",
+    tabPanel("Sub-Component A"),
+    tabPanel("Sub-Component B"))
+)
+```
+
+### E.5 Tabsets Layout
+Skeleton:
+```
+ui <- fluidPage(
+ 
+ titlePanel("Tabsets"),
+ 
+ sidebarLayout(
+   
+   sidebarPanel(
+     # Inputs excluded for brevity
+   ),
+   
+   mainPanel(
+     tabsetPanel(
+       tabPanel("Plot", plotOutput("plot")), 
+       tabPanel("Summary", verbatimTextOutput("summary")), 
+       tabPanel("Table", tableOutput("table"))
+     )
+   )
+ )
+)
+```
