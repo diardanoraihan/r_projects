@@ -56,8 +56,8 @@ all_data <- bind_rows(city1,city2,city3)
 #            tableOuput(...)
 #     )
 #   )
-#   
-#  
+#
+#
 # )
 
 
@@ -65,9 +65,9 @@ all_data <- bind_rows(city1,city2,city3)
 
 # Define UI
 ui <- fluidPage(
-  
+
   titlePanel("Multicolumn Format"),
-  
+
   h2("These are the same inputs and figures repeated in two rows."),
   ####create multiple rows of input methods - rows are 12 units
   fluidRow(
@@ -79,7 +79,7 @@ ui <- fluidPage(
                          min=1990,
                          max=1994,
                          sep=""),
-             
+
              selectInput(inputId="city1",
                          label="Which City Do you Want to Display?",
                          choices=c("Hong Kong","Macau","Dubai"),
@@ -87,16 +87,16 @@ ui <- fluidPage(
              )
            )
     ),
-    
+
     column(4,
            plotOutput("plot1")
     ),
-    
+
     column(4,
            tableOutput("table1")
     )
   ),
-  
+
   fluidRow(
     column(4,
            wellPanel(
@@ -106,7 +106,7 @@ ui <- fluidPage(
                          min=1990,
                          max=1994,
                          sep=""),
-             
+
              selectInput(inputId="city2",
                          label="Which City Do you Want to Display?",
                          choices=c("Hong Kong","Macau","Dubai"),
@@ -114,11 +114,11 @@ ui <- fluidPage(
              )
            )
     ),
-    
+
     column(4,
            plotOutput("plot2")
     ),
-    
+
     column(4,
            tableOutput("table2")
     )
@@ -128,58 +128,58 @@ ui <- fluidPage(
 ########write the server function that will generate the plots and tables to add to output
 
 server <- function(input, output){
-  
+
   output$table1 <- renderTable(
-    
+
     {
       table_data1<-filter(
         all_data,
         city==input$city1 & year>=input$input_year[1] & year<=input$input_year[2])
-      
+
       table_data1 <- table_data1%>%select(year,var1)
       table_data1$year <- as.integer(table_data1$year)
       table_data1
-      
+
     }
   )
-  
+
   output$plot1 <- renderPlot({
-    
+
     plot_dat1<-filter(
       all_data,
       city==input$city1 & year>=input$input_year[1] & year<=input$input_year[2])
-    
+
     ggplot(plot_dat1,
            aes(x=year,y=var1,group=city))+
       geom_line()
-    
+
   })
-  
-  
+
+
   output$table2 <- renderTable(
-    
+
     {
       table_data2<-filter(
         all_data,
         city==input$city2 & year>=input$input_year2[1] & year<=input$input_year2[2])
-      
+
       table_data2 <- table_data2%>%select(year,var1)
       table_data2$year <- as.integer(table_data2$year)
       table_data2
-      
+
     }
   )
-  
+
   output$plot2 <- renderPlot({
-    
+
     plot_dat2<-filter(
       all_data,
       city==input$city2 & year>=input$input_year2[1] & year<=input$input_year2[2])
-    
+
     ggplot(plot_dat2,
            aes(x=year,y=var1,group=city))+
       geom_line()
-    
+
   })
 }
 
